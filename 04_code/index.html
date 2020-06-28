@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        
+        
+        <link rel="shortcut icon" href="../img/favicon.ico">
+        <title>04 code - Spectrum Analyzer</title>
+        <link href="../css/bootstrap.min.css" rel="stylesheet">
+        <link href="../css/font-awesome.min.css" rel="stylesheet">
+        <link href="../css/base.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
+
+        <script src="../js/jquery-1.10.2.min.js" defer></script>
+        <script src="../js/bootstrap.min.js" defer></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+        <script>hljs.initHighlightingOnLoad();</script> 
+    </head>
+
+    <body>
+        <div class="navbar fixed-top navbar-expand-lg navbar-dark bg-primary">
+            <div class="container">
+                <a class="navbar-brand" href="..">Spectrum Analyzer</a>
+                <!-- Expander button -->
+                <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbar-collapse">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <!-- Expanded navigation -->
+                <div id="navbar-collapse" class="navbar-collapse collapse">
+                        <!-- Main navigation -->
+                        <ul class="nav navbar-nav">
+                            <li class="navitem">
+                                <a href="../02_hardware/" class="nav-link">Hardware</a>
+                            </li>
+                            <li class="navitem">
+                                <a href="../03_software/" class="nav-link">Software</a>
+                            </li>
+                        </ul>
+
+                    <ul class="nav navbar-nav ml-auto">
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" data-toggle="modal" data-target="#mkdocs_search_modal">
+                                <i class="fa fa-search"></i> Search
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="row">
+                    <div class="col-md-3"><div class="navbar-light navbar-expand-md bs-sidebar hidden-print affix" role="complementary">
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggler collapsed" data-toggle="collapse" data-target="#toc-collapse" title="Table of Contents">
+            <span class="fa fa-angle-down"></span>
+        </button>
+    </div>
+
+    
+    <div id="toc-collapse" class="navbar-collapse collapse card bg-secondary">
+        <ul class="nav flex-column">
+            
+            <li class="nav-item" data-level="1"><a href="#eyfi-mega-based-spectrum-analyzer" class="nav-link">eYFi-Mega based Spectrum Analyzer</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            
+            <li class="nav-item" data-level="1"><a href="#program-code" class="nav-link">Program Code</a>
+              <ul class="nav flex-column">
+            <li class="nav-item" data-level="2"><a href="#for-atmega2560" class="nav-link">For ATmega2560</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-level="2"><a href="#for-esp32" class="nav-link">For ESP32</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+              </ul>
+            </li>
+        </ul>
+    </div>
+</div></div>
+                    <div class="col-md-9" role="main">
+
+<!----------------------------------------------------------->
+
+<!----------------------------------------------------------->
+
+<!-- 
+---- File Name      : 04_code.md
+---- Site Name      : Spectrum Analyzer
+---- Project Name   : eYFi-Mega based Audio Synthesizer and Spectrum Analyzer
+---- Project No.    : 12
+---- Author         : Sayyed Marefat
+---- Date           : 24 June 2020
+  -->
+
+<!----------------------------------------------------------->
+
+<!----------------------------------------------------------->
+
+<!-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -->
+
+<!-- Title -->
+
+<h1 id="eyfi-mega-based-spectrum-analyzer"><strong>eYFi-Mega based Spectrum Analyzer</strong></h1>
+<p><strong>Mentor(s)</strong> : Sourav, Prasad, eYRDC <br/>
+<strong>Interns</strong> : Aravinda Harithsa, Marefat Abbas<br/>
+<hr></p>
+<!-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -->
+
+<!-- Program Code -->
+
+<h1 id="program-code"><strong>Program Code</strong></h1>
+<p></br></p>
+<!-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -->
+
+<!-- ATMEGA2560 -->
+
+<h2 id="for-atmega2560"><strong><em>For ATmega2560</em></strong></h2>
+<pre><code>/*********************************************************
+ *********************************************************
+ * Program Name     : atmega2560
+ * Project Name     : eYFi-Mega based Spectrum Analyzer
+ * Project Number   : 12
+ * Author           : Marefat Abbas, Aravinda Harithsa
+ * Date             : 24 June 2020
+ *********************************************************
+ *********************************************************/
+
+
+#include &lt;Keypad.h&gt;
+const byte ROWS = 4; //four rows
+const byte COLS = 4; //three columns
+char keys[ROWS][COLS] = {
+    {'1','2','3','A'},
+    {'4','5','6','B'},
+    {'7','8','9','C'},
+    {'*','0','#','D'}
+};
+byte rowPins[ROWS] = {5,7,9,11}; //connect to the row pinouts of the keypad
+byte colPins[COLS] = {4,46,44,6}; //connect to the column pinouts of the keypad
+Keypad keypad = Keypad( makeKeymap(keys), rowPins, colPins, ROWS, COLS );
+byte ledPin = 13; 
+boolean ledPin_state;
+
+void setup(){
+    Serial.begin(9600);
+    Serial1.begin(9600);
+    pinMode(ledPin, OUTPUT);              // Sets the digital pin as output.
+    digitalWrite(ledPin, HIGH);           // Turn the LED on.
+    ledPin_state = digitalRead(ledPin);   // Store initial LED state. HIGH when LED is on.
+    keypad.addEventListener(keypadEvent); // Add an event listener for this keypad
+}
+
+void loop(){
+    char key = keypad.getKey();
+
+    if (key) {
+        Serial1.write(key);
+        Serial.println(key);
+    }
+
+}
+
+// Taking care of some special events.
+void keypadEvent(KeypadEvent key){
+    switch (keypad.getkey()){
+    case PRESSED:
+    {
+        if (key == '#') {
+            digitalWrite(ledPin,!digitalRead(ledPin));
+            ledPin_state = digitalRead(ledPin);        // Remember LED state, lit or unlit.
+        }
+        break;
+    }
+}
+</code></pre>
+
+<p></br></p>
+<!-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -->
+
+<!-- ESP 32 -->
+
+<h2 id="for-esp32"><strong><em>For ESP32</em></strong></h2>
+<pre><code>/*********************************************************
+ *********************************************************
+ * Program Name     : esp32
+ * Project Name     : eYFi-Mega based Spectrum Analyzers
+ * Project Number   : 12
+ * Author           : Marefat Abbas, Aravinda Harithsa
+ * Date             : 24 June 2020
+ *********************************************************
+ *********************************************************/
+
+
+// Header
+#include &lt;Wire.h&gt;
+#include &quot;arduinoFFT.h&quot; 
+#include &quot;SSD1306.h&quot;  
+SSD1306 display(0x3c,SDA,SCL);  
+#define SAMPLES 512              
+#define SAMPLING_FREQUENCY 40000 
+#define amplitude 150 
+#include &lt;Tone32.h&gt;
+#include &quot;SoundData.h&quot;
+#include &quot;XT_DAC_Audio.h&quot;
+#define Num_Samples  112   //  number of dample of signal
+#define MaxWaveTypes 4   // types of wave (signal)
+int count1 = 0;
+
+
+int8_t PROGMEM TwinkleTwinkle[] = {
+  NOTE_C5,NOTE_C5,NOTE_G5,NOTE_G5,NOTE_A5,NOTE_A5,NOTE_G5,BEAT_2,
+  NOTE_F5,NOTE_F5,NOTE_E5,NOTE_E5,NOTE_D5,NOTE_D5,NOTE_C5,BEAT_2,
+  NOTE_G5,NOTE_G5,NOTE_F5,NOTE_F5,NOTE_E5,NOTE_E5,NOTE_D5,BEAT_2,
+  NOTE_G5,NOTE_G5,NOTE_F5,NOTE_F5,NOTE_E5,NOTE_E5,NOTE_D5,BEAT_2,
+  NOTE_C5,NOTE_C5,NOTE_G5,NOTE_G5,NOTE_A5,NOTE_A5,NOTE_G5,BEAT_2,
+  NOTE_F5,NOTE_F5,NOTE_E5,NOTE_E5,NOTE_D5,NOTE_D5,NOTE_C5,BEAT_4,  
+  NOTE_SILENCE,BEAT_5,SCORE_END
+};
+
+
+XT_DAC_Audio_Class DacAudio(25,0);  //Create main player class object. Use GPIO 25, one of the 2 DAC pins and timer0
+XT_Wav_Class Zero(sa);          
+XT_Wav_Class One(re);          
+XT_Wav_Class Two(ga);           
+XT_Wav_Class Three(ma);           
+XT_Wav_Class Four(pa);           
+XT_Wav_Class Five(da);       
+XT_Wav_Class Six(nee);        
+XT_Wav_Class Seven(bsa);          
+XT_Wav_Class Eight(EightWav);           
+XT_Wav_Class Nine(NineWav);                                     
+XT_Sequence_Class Sequence; // The sequence object, you add your sounds above to this object (see setup below)
+
+
+// Creation of FFT object for arudino 
+arduinoFFT FFT = arduinoFFT();    
+
+
+unsigned int sampling_period_us;
+unsigned long microseconds;
+byte peak[] = {0,0,0,0,0,0,0};
+double vReal[SAMPLES];
+double vImag[SAMPLES];
+unsigned long newTime, oldTime;
+void TaskBlink( void *pvParameters );
+void TaskAnalogReadA3( void *pvParameters );
+void displayBand(int band, int dsize){
+  int dmax = 50;
+  if (dsize &gt; dmax) dsize = dmax;
+  if (band == 7) display.drawHorizontalLine(18*6,0, 14);
+  for (int s = 0; s &lt;= dsize; s=s+2){display.drawHorizontalLine(18*band,64-s, 14);}
+  if (dsize &gt; peak[band]) {peak[band] = dsize;}
+}
+void PlayNumber(char const *Number)
+{  
+  int NumChars=strlen(Number);              // could lose this line of put strlen in loop below, but bad form to do so
+  Sequence.RemoveAllPlayItems();            // Clear out any previous playlist
+  for(int i=0;i&lt;NumChars;i++)
+    AddNumberToSequence(Number[i]);         // For each number add in the sound for that number to the sequence
+  DacAudio.Play(&amp;Sequence);                 // Play the sequence, will not wait here to complete, works independently of your code
+  Serial.println(Number);                   // Confirm number entered to the user over the serial
+}
+
+void AddNumberToSequence(char TheNumber)
+{
+  // Adds in the wav for the single 0-9 number passed in as a char
+
+  switch(TheNumber)
+  {
+    case '0' : Sequence.AddPlayItem(&amp;Zero);break;
+    case '1' : Sequence.AddPlayItem(&amp;One);break;
+    case '2' : Sequence.AddPlayItem(&amp;Two);break;
+    case '3' : Sequence.AddPlayItem(&amp;Three);break;
+    case '4' : Sequence.AddPlayItem(&amp;Four);break;
+    case '5' : Sequence.AddPlayItem(&amp;Five);break;
+    case '6' : Sequence.AddPlayItem(&amp;Six);break;
+    case '7' : Sequence.AddPlayItem(&amp;Seven);break;
+    case '8' : Sequence.AddPlayItem(&amp;Eight);break;
+    case '9' : Sequence.AddPlayItem(&amp;Nine);break;
+  }
+}
+
+void setup() {
+
+  // initialize serial communication at 115200 bits per second:
+  Serial.begin(115200);
+  Serial2.begin(9600, SERIAL_8N1,16, 17);
+  Wire.begin(5,4); // SDA, SCL
+  display.init();
+  display.setFont(ArialMT_Plain_10);
+  display.flipScreenVertically(); // Adjust to suit or remove
+  sampling_period_us = round(1000000 * (1.0 / SAMPLING_FREQUENCY));
+
+
+  // Now set up two tasks to run independently.
+  xTaskCreatePinnedToCore(
+    TaskBlink
+    ,  &quot;TaskBlink&quot;   // Name of this particular task given for understanding 
+    ,  1024         // This stack size can be checked &amp; adjusted by reading the Stack Highwater
+    ,  NULL
+    ,  1            // Priority
+    ,  NULL 
+    ,  0);
+
+  xTaskCreatePinnedToCore(
+    TaskAnalogReadA3
+    ,  &quot;AnalogReadA3&quot;
+    ,  1024  // Stack size
+    ,  NULL
+    ,  2                // Priority
+    ,  NULL 
+    ,  1);      // here select the core to which this task will be pinned
+
+          // Now the task scheduler, which takes over control of scheduling individual tasks, is automatically started.
+}
+
+void loop()
+{
+  // Empty. Things are done in Tasks.
+}
+
+/*-----------------------------------------------------------------------------------------------------------------*/
+/*---------------------- Tasks ( Running Serial monitor and Audio synthesizer--------------------------------------*/
+/*-----------------------------------------------------------------------------------------------------------------*/
+
+void TaskBlink(void *pvParameters)  // This is a task.
+{
+(void) pvParameters;
+XT_DAC_Audio_Class DacAudio(25,0);  // Create the main player class object. Use GPIO 25 (DAC pin) and timer 0
+
+for (;;)
+  { 
+   DacAudio.FillBuffer();          
+  if(Serial.available()) 
+    PlayNumber(Serial.readString().c_str());
+
+     vTaskDelay(10); 
+  }
+}
+
+
+/*-----------------------------------------------------------------------------------------------------------------*/
+/*---------------------- Tasks ( Running DSP algorithm for FFT generation and Running audio Synthesizer---------------------*/
+/*------------------------------------------------------------------------------------------------------------------*/
+void TaskAnalogReadA3(void *pvParameters)  // This is a task for spectrum analyzer
+{
+  (void) pvParameters;
+
+  for (;;)
+  { 
+  Serial.println(&quot;SPECTRUM&quot;);
+  display.clear();
+  display.drawString(0,0,&quot;0.1 0.2 0.5 1K  2K  4K  8K&quot;);
+  for (int i = 0; i &lt; SAMPLES; i++) 
+  {
+    newTime = micros()-oldTime;
+    oldTime = newTime;
+    vReal[i] = analogRead(A0); // A conversion takes about 1uS on an ESP32
+    vImag[i] = 0;
+    while (micros() &lt; (newTime + sampling_period_us)) { /* do nothing to wait */ }
+  }
+  FFT.Windowing(vReal, SAMPLES, FFT_WIN_TYP_HAMMING, FFT_FORWARD);
+  FFT.Compute(vReal, vImag, SAMPLES, FFT_FORWARD);
+  FFT.ComplexToMagnitude(vReal, vImag, SAMPLES);
+
+
+  for (int i = 2; i &lt; (SAMPLES/2); i++){ // Don't use sample 0 and only first SAMPLES/2 are usable. Each array eleement represents a frequency and its value the amplitude.
+    if (vReal[i] &gt; 2000) { // Add a crude noise filter, 10 x amplitude or more
+      if (i&lt;=2 )             displayBand(0,(int)vReal[i]/amplitude); // 125Hz
+      if (i &gt;3   &amp;&amp; i&lt;=5 )   displayBand(1,(int)vReal[i]/amplitude); // 250Hz
+      if (i &gt;5   &amp;&amp; i&lt;=7 )   displayBand(2,(int)vReal[i]/amplitude); // 500Hz
+      if (i &gt;7   &amp;&amp; i&lt;=15 )  displayBand(3,(int)vReal[i]/amplitude); // 1000Hz
+      if (i &gt;15  &amp;&amp; i&lt;=30 )  displayBand(4,(int)vReal[i]/amplitude); // 2000Hz
+      if (i &gt;30  &amp;&amp; i&lt;=53 )  displayBand(5,(int)vReal[i]/amplitude); // 4000Hz
+      if (i &gt;53  &amp;&amp; i&lt;=200 ) displayBand(6,(int)vReal[i]/amplitude); // 8000Hz
+      if (i &gt;200           ) displayBand(7,(int)vReal[i]/amplitude); // 16000Hz
+
+    }
+    for (byte band = 0; band &lt;= 6; band++) display.drawHorizontalLine(18*band,64-peak[band],14);
+  }
+  if (millis()%4 == 0) {for (byte band = 0; band &lt;= 6; band++) {if (peak[band] &gt; 0) peak[band] -= 1;}} // Decay the peak
+  display.display();
+  vTaskDelay(10); 
+  }
+}
+</code></pre></div>
+            </div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+        <script>
+            var base_url = "..",
+                shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
+        </script>
+        <script src="../js/base.js" defer></script>
+        <script src="../search/main.js" defer></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="searchModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="searchModalLabel">Search</h4>
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            </div>
+            <div class="modal-body">
+                <p>
+                    From here you can search these documents. Enter
+                    your search terms below.
+                </p>
+                <form>
+                    <div class="form-group">
+                        <input type="search" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="keyboardModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="keyboardModalLabel">Keyboard Shortcuts</h4>
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            </div>
+            <div class="modal-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 20%;">Keys</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="help shortcut"><kbd>?</kbd></td>
+                    <td>Open this help</td>
+                  </tr>
+                  <tr>
+                    <td class="next shortcut"><kbd>n</kbd></td>
+                    <td>Next page</td>
+                  </tr>
+                  <tr>
+                    <td class="prev shortcut"><kbd>p</kbd></td>
+                    <td>Previous page</td>
+                  </tr>
+                  <tr>
+                    <td class="search shortcut"><kbd>s</kbd></td>
+                    <td>Search</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+    </body>
+</html>

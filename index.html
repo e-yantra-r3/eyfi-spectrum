@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="None">
+        
+        
+        <link rel="shortcut icon" href="img/favicon.ico">
+        <title>Spectrum Analyzer</title>
+        <link href="css/bootstrap.min.css" rel="stylesheet">
+        <link href="css/font-awesome.min.css" rel="stylesheet">
+        <link href="css/base.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
+
+        <script src="js/jquery-1.10.2.min.js" defer></script>
+        <script src="js/bootstrap.min.js" defer></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+        <script>hljs.initHighlightingOnLoad();</script> 
+    </head>
+
+    <body class="homepage">
+        <div class="navbar fixed-top navbar-expand-lg navbar-dark bg-primary">
+            <div class="container">
+                <a class="navbar-brand" href=".">Spectrum Analyzer</a>
+                <!-- Expander button -->
+                <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbar-collapse">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <!-- Expanded navigation -->
+                <div id="navbar-collapse" class="navbar-collapse collapse">
+                        <!-- Main navigation -->
+                        <ul class="nav navbar-nav">
+                            <li class="navitem">
+                                <a href="02_hardware/" class="nav-link">Hardware</a>
+                            </li>
+                            <li class="navitem">
+                                <a href="03_software/" class="nav-link">Software</a>
+                            </li>
+                        </ul>
+
+                    <ul class="nav navbar-nav ml-auto">
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" data-toggle="modal" data-target="#mkdocs_search_modal">
+                                <i class="fa fa-search"></i> Search
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="row">
+                    <div class="col-md-3"><div class="navbar-light navbar-expand-md bs-sidebar hidden-print affix" role="complementary">
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggler collapsed" data-toggle="collapse" data-target="#toc-collapse" title="Table of Contents">
+            <span class="fa fa-angle-down"></span>
+        </button>
+    </div>
+
+    
+    <div id="toc-collapse" class="navbar-collapse collapse card bg-secondary">
+        <ul class="nav flex-column">
+            
+            <li class="nav-item" data-level="1"><a href="#_1" class="nav-link"></a>
+              <ul class="nav flex-column">
+            <li class="nav-item" data-level="2"><a href="#introduction" class="nav-link">Introduction</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-level="2"><a href="#eyfi-mega-development-board" class="nav-link">eYFi Mega Development board</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-level="2"><a href="#what-is-a-spectrum-analyzer" class="nav-link">What is a Spectrum Analyzer ?</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-level="2"><a href="#digital-signal-processing-dsp" class="nav-link">Digital Signal Processing (DSP)</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-level="2"><a href="#esp32-based-spectrum-analyser" class="nav-link">ESP32 based  Spectrum Analyser</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+              </ul>
+            </li>
+        </ul>
+    </div>
+</div></div>
+                    <div class="col-md-9" role="main">
+
+<p><center><img src="./images/e-yantra.png" alt="eyantra"></center></p>
+<p><center><h1>eYFi-Mega based Spectrum Analyzer</h1></center></p>
+<p><br></p>
+<h1 id="_1"></h1>
+<p><strong>Mentor(s)</strong> : Sourav, Prasad <br/>
+<strong>Interns</strong> : Aravinda Harithsa, Marefat Abbas<br/></p>
+<hr>
+
+<h2 id="introduction"><strong>Introduction</strong></h2>
+<p>eYFi Mega based Spectrum Analyzer is an Audio device project where we will take the input signal from Microphone and display its frequency spectrum as output. In this project we will be using OLED display for Spectrum Display and an Amplifier Microphone for Signal.
+</br></p>
+<p><strong>DEMO OF PROJECT</strong></p>
+<iframe src="https://drive.google.com/file/d/1aVFI6BiUV-mj9gIg2rddlXBOHG5_s7hp/preview" width="640" height="480"></iframe>
+
+<h2 id="eyfi-mega-development-board"><strong>eYFi Mega</strong> Development board</h2>
+<p>eYFi Mega Development board is an Atmega2560 and ESP32 based development board, made in India. This board is developed by eYantra at IIT Bombay. </p>
+<p><strong>Key-points:</strong></p>
+<ul>
+<li>Atmega2560 and ESP32 based</li>
+<li>WiFi Compatible</li>
+<li>FreeRTOS Compatible</li>
+<li>Arduino IDE suitable</li>
+</ul>
+<h2 id="what-is-a-spectrum-analyzer"><strong>What is a Spectrum Analyzer ? </strong></h2>
+<p><strong>Spectrum Analyzer</strong> is an electronic device which measures the magnitude of an Input Signal (Audio Signal) versus Frequency within full frequency range of device. Used for analyzing waves in frequency domain. This Spectrum Analyzer device is used for Power applications.
+</br></p>
+<h2 id="digital-signal-processing-dsp"><strong>Digital Signal Processing (DSP)</strong></h2>
+<p>Mathematical manipulation of Digial Signals like Audio, Video, Pressure, Temperature, etc is called as <strong>Digital Signal Processing (DSP)</strong>. It is the use of digital processing, such as by computers or more specialized digital signal processors, to perform a wide variety of signal processing operations. DSP can involve linear or nonlinear operations. Nonlinear signal processing is closely related to nonlinear system identification and can be implemented in the time, frequency, and spatio-temporal domains.<br />
+</br></p>
+<h2 id="esp32-based-spectrum-analyser">ESP32 based  Spectrum Analyser</h2>
+<h3 id="overview">Overview</h3>
+<p>This project converts an analogue signal which is received from microphone module and displays its frequency components in the form of a spectrum of  bands on an OLED display. To do this, it uses a Fast Fourier Transform (FFT) . Sampling theorem  is a fundamental bridge between continuous-time signals (analogue signals) and discrete-time signals. It uses a sample rate that enables discrete sequences of samples to capture all the information from a continuous-time signal of finite bandwidth.</p>
+<p>ESP32 WROOM which is present on our development board can analyze analogue signals with a maximum fundamental frequency of 20,000Hz (20.0 KHz) with a sample size of 512 elements. This limit is determined by the Analogue to Digital Converter (ADC) speed which can convert at a rate of approximately 40 KHz.So for our application 0-20,000 hz was more than sufficient </p>
+<p>The system is comprised of the processor ESP32, an OLED display either 0.96″ and a audio microphone MAX4466 unit that is comprised of an electret microphone and pre built tunable amplifier. The received audio is applied to the ADC input of the process.  </p>
+<h3 id="fft-elements-sample-size-and-sampling-frequency">FFT Elements – Sample Size and Sampling frequency</h3>
+<p>Sample Size – The FFT-algorithm defines a set of samples for the analysis results to be stored in. For most algorithms, the number of samples is usually a factor of 2, so 16, 32, 64, 128 or 256 are not unusual. The greater the number of samples the more time it takes to convert an analogue signal, but the greater the frequency resolution and discrimination will be.</p>
+<p>Sampling Frequency – Reference to the Nyquist-Shannon Sampling Theorem says sampling of an analogue signal needs to be at least twice the frequency of the signal being analyzed, this limits the maximum frequency to half of the sampling frequency.</p>
+<p><img alt="" src="images/spectrum1.JPG" /></p>
+<p>The diagram above illustrates a  wave which is colored red in the time domain, which refers to a view of the waveform with respect to amplitude and time, it therefore shows how the waveform changes over time.</p>
+<p>This is then overlaid with a frequency domain plot showing a representation of the individual frequency components which are embedded into it and their phase relationships</p>
+<p>In a Fourier transform analysis converts the function’s time-domain representation, shown in red, to the function’s frequency-domain representation, shown in blue. The component frequencies and amplitudes are spread across the frequency spectrum chosen for analysis and are represented as peaks in the frequency domain.</p>
+<p>In our implementation of code , the Fast Fourier Transform (FFT) is used , which is an algorithm that computes discrete Fourier transforms of the sampled waveform thereby enabling the waveform to be changed from its original time domain to the frequency domain. The FFT rapidly computes such transformations by factorizing the result into a matrix., we have made use of ArudinoFFT library which contains various functions,filters and windows .This library is the heart of the code which does translation of input analog signal into frequency spectrum .This library is easy to use and produced best accurate output for this project. Prototype is configured to make 64 samples and does FFT with those samples. ArduinoFFT library can do FFT of samples between 16 to 512. In the code the result arrays of real and imaginary components are called:</p>
+<p>double vReal[SAMPLES];</p>
+<p>double vImag[SAMPLES];</p>
+<p>In the array vReal and vImag this contains what is called the complex number results separated into the mathematical parlance of Real (vReal) and Imaginary (vImag) components.</p>
+<p><img alt="" src="images/complex.png" /></p>
+<p>The contents of the arrays <strong>vReal</strong> and <strong>vImag</strong> contain the coordinates in the complex number in what's called polar coordinates that refers to the distance of a point  of origin z from the origin (O), and the angle subtended between the positive real axis (Re) and the line segment Oz in a counter-clockwise sense. This leads to the polar form of complex numbers.</p>
+<p>The absolute value (or modulus or magnitude) of a complex number is defined as z = x + jy where ‘j’ is an imaginary operator.</p>
+<p>Its amplitude is derived from <strong>z = sqrt(a2 + b2)</strong></p>
+<p>In the code once the sampling of a waveform has been completed and the result captured in the array elements of vReal[] </p>
+<p>we can ignore the phase angle for the analysis ,so vImag[ ] array elements are always assigned to 0.</p>
+<hr />
+<p>Next the array vReal is analysed by the FFT function, as follows:</p>
+<p><strong>FFT.Windowing(vReal, SAMPLES, FFT_WIN_TYP_HAMMING, FFT_FORWARD);</strong></p>
+<p>here we will be selecting the relevant window function,Number of samples ,and the array values of vreal </p>
+<p><strong>FFT.Compute(vReal, vImag, SAMPLES, FFT_FORWARD);</strong></p>
+<p>Here we will be applying the FFt core algorithm by passing the relevant information </p>
+<p><strong>FFT.ComplexToMagnitude(vReal, vImag, SAMPLES);</strong></p>
+<p>We will be converting the obtained complex results into Real magnitude which can be plotted to form the spectrum . Hence we have reached the last step of this process </p></div>
+            </div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+        <script>
+            var base_url = ".",
+                shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
+        </script>
+        <script src="js/base.js" defer></script>
+        <script src="search/main.js" defer></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="searchModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="searchModalLabel">Search</h4>
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            </div>
+            <div class="modal-body">
+                <p>
+                    From here you can search these documents. Enter
+                    your search terms below.
+                </p>
+                <form>
+                    <div class="form-group">
+                        <input type="search" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="keyboardModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="keyboardModalLabel">Keyboard Shortcuts</h4>
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            </div>
+            <div class="modal-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 20%;">Keys</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="help shortcut"><kbd>?</kbd></td>
+                    <td>Open this help</td>
+                  </tr>
+                  <tr>
+                    <td class="next shortcut"><kbd>n</kbd></td>
+                    <td>Next page</td>
+                  </tr>
+                  <tr>
+                    <td class="prev shortcut"><kbd>p</kbd></td>
+                    <td>Previous page</td>
+                  </tr>
+                  <tr>
+                    <td class="search shortcut"><kbd>s</kbd></td>
+                    <td>Search</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+    </body>
+</html>
+
+<!--
+MkDocs version : 1.1.2
+Build Date UTC : 2020-06-28 01:26:21.039475+00:00
+-->
